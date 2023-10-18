@@ -15,52 +15,42 @@
  */
 class Solution {
     public List<Integer> postorderTraversal(TreeNode root) {
-        List<Integer> ans = new ArrayList<>();
-        if(root==null)return ans;
-        iterPost(root,ans);
-        return ans;
-    }
-    class TPair{
-        TreeNode node=null;
-        boolean selfdone=false;
-        boolean leftdone=false;
-        boolean rightdone=false;
-        TPair(TreeNode node, boolean selfdone,boolean leftdone, boolean rightdone){
-            this.node=node;
-            this.selfdone=selfdone;
-            this.leftdone=leftdone;
-            this.rightdone=rightdone;
-        }
-    }
-    public void iterPost(TreeNode root,List<Integer>ans) {
-        Stack<TPair> st = new Stack<>();
-        st.push(new TPair(root,false,false,false));
-        while(st.size()!=0)
+        List<Integer> ans = new ArrayList<Integer>();
+        TreeNode curr=root;
+        while(curr!=null)
         {
-            if(st.peek().leftdone==false)
+            if(curr.right==null)
             {
-                st.peek().leftdone=true;
-                if(st.peek().node.left!=null)st.push(new TPair(st.peek().node.left,false,false,false));
-            }
-            else if(st.peek().rightdone==false)
-            {
-                st.peek().rightdone=true;
-                if(st.peek().node.right!=null)st.push(new TPair(st.peek().node.right,false,false,false));
-
-            }
-            else if(st.peek().selfdone==false)
-            {
-                st.peek().selfdone=true;
-                ans.add(st.peek().node.val);
+             ans.add(0,curr.val);
+             curr=curr.left;  
             }
             else
             {
-                st.pop();
-            }
-            
-        }
+                TreeNode leftMost=leftMostOfRightNode(curr);
+                if(leftMost.left==null)//thread create
+                {
+                    leftMost.left=curr;
+                    ans.add(0,curr.val);
+                    curr=curr.right;
+                }
+                else//thread break//right  khtm
+                {
+                    leftMost.left=null;
+                    curr=curr.left;
 
+                }
+            }
+        }
+        return ans;
         
     }
-
+    TreeNode leftMostOfRightNode(TreeNode node)
+    {
+        TreeNode ans=node.right;
+        while(ans.left!=null&&ans.left!=node)
+        {
+            ans =ans.left;
+        }
+        return ans;
+    }
 }
